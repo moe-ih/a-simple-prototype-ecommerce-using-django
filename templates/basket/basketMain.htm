@@ -1,0 +1,81 @@
+{% extends "header.htm" %}
+{% load static %}
+
+{% block title %} summary {% endblock %}
+
+{% block card %}
+
+    <h3 class="text-end">List of your items </h3>
+
+
+{% for basket in baskets %}
+
+    {% with item=basket.product %}
+   
+    <div class="card mb-3 product-item" style="max-width: 540px;" data-index="{{item.id}}">
+  <div class="row g-0">
+    <div class="col-md-4">
+      <img src="{{ item.image.url }}" alt="..." width="145" height="150">
+    </div>
+    <div class="col-md-8">
+      <div class="card-body">
+        <h5 class="card-title">{{item.title}}</h5>
+        <p class="card-text" style="color: brown;">{{item.price}}$</p>
+        <p class="text-end">QTY :  
+            {{basket.qty}}  
+        </p>
+        <a href="{{item.get_absolute_url}}"  class="btn btn-outline-secondary btn-sm update-button">
+                  Update
+      </a>
+    <button type="button"  data-index="{{item.id}}"
+        class="btn btn-outline-secondary btn-sm delete-button">
+        Delete
+    </button>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    {% endwith %}
+
+  
+{% endfor %}
+
+
+    <div class="col-12 text-end">
+      <a type="button" class="btn btn-primary btn-md" href="{% url 'payment:main'  %}">
+          Checkout
+      </a>
+    <hr>
+      <div class="h6 fw-bold">Sub Total: $<div id="subtotal" class="d-inline-flex">{{basket.get_total_price}}</div></div>
+    </div>
+
+<script >
+    $(document).on('click' , '.delete-button' , function (e) {
+        e.preventDefault()
+        
+        var prodid = $(this).data('index');
+        $.ajax({
+            type : "POST",
+            url : "{% url 'basket:delete_basket' %}",
+            data :{
+                productid : $(this).data('index'),
+                csrfmiddlewaretoken : "{{csrf_token}}",
+                action : 'delete'
+            },
+            success : function (json) { 
+                console.log(json);
+                $('.product-item[data-index="' + prodid + '"]').remove();
+                document.getElementById("subtotal").innerHTML = json.subtotal;
+                document.getElementById("basket-count").innerHTML = json.qty
+
+              },
+              
+            error : function (xhr , errmsg , err) {
+                    
+              }
+        });
+    })
+</script>
+
+{% endblock %}

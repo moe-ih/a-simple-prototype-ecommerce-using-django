@@ -1,0 +1,64 @@
+{% extends "header.htm" %}
+{% load static %}
+
+{% block title %} {{item.title}} {% endblock %}
+
+{% block card %}
+
+
+<div class="card mb-3">
+    <img src="{{ item.image.url }}" class="card-img-top" alt="...">
+    <div class="card-body">
+        <h5 class="card-title">{{item.title}} #From {{item.author}}</h5>
+        <p class="text-end" style="color: brown;">{{item.price}}$</p>
+        {% if item.is_stock %}
+            <p class="text-end" style="color: green;">in stock</p>
+        {% else %}
+            <p class="text-end" style="color: red;">Not Found in stock</p>
+        {% endif %}
+        
+
+        <p class="card-text">{{item.description}}</p>
+
+        <label for="select">Qty</label>
+        <select id="select">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+        </select>
+        
+        <button type="button" class="btn btn-primary btn-sm" id="add-button" value="{{item.id}}">Add to Basket</button>
+
+
+        <p class="card-text"><small class="text-muted">Last updated {{item.updated}}</small></p>
+    
+    </div>
+</div>
+
+<script >
+    $(document).on('click' , '#add-button' , function (e) {
+        
+        $.ajax({
+            type : "POST",
+            url : "{% url 'basket:basket_add' %}",
+            data :{
+                productid : $('#add-button').val(),
+                qty : $("#select option:selected").text(),
+                csrfmiddlewaretoken : "{{csrf_token}}",
+                action : 'post'
+            },
+            success : function (json) {
+                console.log("success");
+                    document.getElementById("basket-count").innerHTML = json.qty
+                    //location.reload();
+              },
+              
+            error : function (xhr , errmsg , err) {
+
+              }
+        });
+    })
+</script>
+
+{% endblock %}

@@ -1,0 +1,8 @@
+
+{% if request.user.is_authenticated %}
+<script>
+    window.location.href = '{% url "account:dashboard" %}';
+</script>
+{% endif %}
+
+Error Invalid token !!
