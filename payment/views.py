@@ -17,7 +17,7 @@ def main(request):
     total = total.replace('.', '')
     total = int(total)
     if basket_session.current_basket_session:
-        stripe.api_key = "sk_test_51ITS4wLj3bOPswXRIdrgWqrXTmykXjDcW1g8QIW8xtV3zi9hNolGzrlkCMMbLJtkOCAP8YMboyCpouIH1QbMpYRK00N7MyT0w3"
+        stripe.api_key = ""
     
         intent = stripe.PaymentIntent.create(
             amount=total,
